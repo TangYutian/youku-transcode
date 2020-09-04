@@ -63,3 +63,7 @@ function transcode(inputPath, outputPath) {
     })
     return result
 }
+
+module.exports = {
+    transcode: transcode
+}

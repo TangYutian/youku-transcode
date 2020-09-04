@@ -1,53 +1,30 @@
 const http = require('http')
 const server = http.createServer()
 
-const methods = {
-    '/files': getFileList
-}
+const controllers = [
+    require('./file-controller')
+]
+const reqUtil = require('./req-util')
+const result = require('./result')
 
+const methods = {}
 server.listen(3000, 'localhost', () => {
-    console.log("server is listening on port 3000 ")
+    console.log('server is listening on port 3000 ')
+    controllers.forEach(
+        controller => {
+            controller.methods.forEach(method => {
+            console.log('mapping: ' + method.mapping)
+            methods[method.mapping] = method.handler
+        })
+    })
 })
 
 server.on('request', (req, res) => {
-    let result = {
-        'status': 0,
-        'msg': {} 
-    }
-    const url = parseUrl(req.url)
+    ret = result.success(null)
+    const url = reqUtil.parseUrl(req.url)
     const method = methods[url.pathname]
     if(method != null || method != undefined){
-       result =  method(req, url, res)
+       ret =  method(req, url, res)
     }
-    res.end(JSON.stringify(result))
+    res.end(JSON.stringify(ret))
 })
-
-function parseUrl(originalUrl){
-    const params = {}
-    const originalParams = originalUrl.replace(/.*\?/g, '').split(/&/g)
-    originalParams.forEach(p => {
-        const ps = p.split(/=/)
-        params[ps[0]] = ps[1]
-    })
-    const result = {
-        'pathname': originalUrl.replace(/\?.*/g, ''),
-        'params': params
-    }
-    console.log(JSON.stringify(result))
-    return result
-}
-
-function getFileList(req, url, res) {
-    const result = {
-        'status': 0,
-        'msg': 'success',
-        'data': {}
-    }
-    const params = url.params
-    data = {
-        'a': params.a,
-        'b': params.b
-    }
-    result.data = data
-    return result
-}
