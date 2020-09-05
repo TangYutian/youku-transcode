@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh_cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>优酷转换器</title>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+</head>
+<body>
+    <div id='form'>
+        <input placeholder='输入文件夹路径' id='inputPath' type="text" value="D:\youku\tmp" /></br>
+        <input placeholder='输出文件夹路径' id='outputPath' type=text value="D:\youku\out"/></br>
+        <button onclick="transcode()" >确定</button>
+    </div>
+    <div id='success'>
+    </div>
+    <div id='error'>
+    </div>
+    <script type='text/javascript'>
+        function transcode() {
+            const ip = $('#inputPath').val()
+            const op = $('#outputPath').val()
+            console.log(ip, op)
+            $.ajax({
+                url: 'http://localhost:3000/transcode?inputPath=' + ip + '&outputPath=' + op ,
+                type: 'get',
+                success: function (res) {
+                    res = JSON.parse(res)
+                    const success = res.data.success
+                    const error = res.data.error
+                    for(let i = 0; i < success.length; i++){
+                        $('#success').append(success[i] + '</br>')
+                    }
+                    for(let i = 0; i < error.length; i++){
+                        $('#error').append(error[i] + '</br>')
+                    }
+                }
+            })
+        }
+    </script>
+</body>
+</html>

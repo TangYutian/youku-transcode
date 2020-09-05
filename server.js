@@ -1,14 +1,18 @@
 const http = require('http')
-const server = http.createServer()
 
 const controllers = [
     require('./file-controller')
 ]
 const reqUtil = require('./req-util')
 const result = require('./result')
-
 const methods = {}
-server.listen(3000, 'localhost', () => {
+
+const server = http.createServer((req, res) => {
+ // 开发环境设置，生产环境谨慎使用
+ res.setHeader('Access-Control-Allow-Origin', '*');
+ res.setHeader("Access-Control-Allow-Headers", "X-Requested-With");
+ res.setHeader("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+}).listen(3000, 'localhost', () => {
     console.log('server is listening on port 3000 ')
     controllers.forEach(
         controller => {
@@ -26,5 +30,7 @@ server.on('request', (req, res) => {
     if(method != null || method != undefined){
        ret =  method(req, url, res)
     }
-    res.end(JSON.stringify(ret))
+    const data = JSON.stringify(ret)
+    console.log(data)
+    res.end(data)
 })
