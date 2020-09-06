@@ -1,20 +1,58 @@
 <!DOCTYPE html>
 <html lang="zh_cn">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>优酷转换器</title>
     <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            margin: 0;
+            background-color: rgb(230, 230, 230)
+        }
+        #transcode {
+            width: 50%;
+            height: 600px;
+            background-color: white;
+            margin: auto;
+            margin-top: 30px;
+            border-radius: 6px;
+            padding: 20px;
+        }
+        img {
+            width: 15px;
+            height: 15px;
+        }
+    </style>
 </head>
+
 <body>
-    <div id='form'>
-        <input placeholder='输入文件夹路径' id='inputPath' type="text" value="D:\youku\tmp" /></br>
-        <input placeholder='输出文件夹路径' id='outputPath' type=text value="D:\youku\out"/></br>
-        <button onclick="transcode()" >确定</button>
-    </div>
-    <div id='success'>
-    </div>
-    <div id='error'>
+    <div id='transcode'>
+        <form class='form-horizontal'>
+            <div class='form-group'>
+                <label class='col-sm-3 control-label'>输入文件夹路径：</label>
+                <div class="col-sm-9">
+                <input placeholder='输入文件夹路径' id='inputPath' type="text" class="form-control"/></br>
+                </div>
+            </div>
+            <div class='form-group'>
+                <label class='col-sm-3 control-label'>输出文件夹路径：</label>
+                <div class="col-sm-9">
+                <input placeholder='输出文件夹路径' id='outputPath' type="text" class="form-control"/></br>
+                </div>
+            </div>
+            <div class='form-group'>
+                <label class='col-sm-1'></label>
+                <div class='btn btn-primary' onclick="transcode()">确定</div>
+            </div>
+        </form>
+        <div>
+            <div class='col-sm-12 h4'>转码结果: </div>
+            <div class='col-sm-12 pre-scrollable' id='result' style="height: 300px;">
+            </div>
+        </div>
     </div>
     <script type='text/javascript'>
         function transcode() {
@@ -22,21 +60,22 @@
             const op = $('#outputPath').val()
             console.log(ip, op)
             $.ajax({
-                url: 'http://localhost:3000/transcode?inputPath=' + ip + '&outputPath=' + op ,
+                url: 'http://localhost:3000/transcode?inputPath=' + ip + '&outputPath=' + op,
                 type: 'get',
                 success: function (res) {
                     res = JSON.parse(res)
                     const success = res.data.success
                     const error = res.data.error
-                    for(let i = 0; i < success.length; i++){
-                        $('#success').append(success[i] + '</br>')
+                    for (let i = 0; i < success.length; i++) {
+                        $('#result').append(success[i] + ' <img src="./img/success.png"></img></br>')
                     }
-                    for(let i = 0; i < error.length; i++){
-                        $('#error').append(error[i] + '</br>')
+                    for (let i = 0; i < error.length; i++) {
+                        $('#result').append(error[i] + ' <img src="./img/error.png"></img></br>')
                     }
                 }
             })
         }
     </script>
 </body>
+
 </html>
